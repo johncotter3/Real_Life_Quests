@@ -3,6 +3,8 @@ import { SafeAreaView, View, Text, TextInput, FlatList, StyleSheet, TouchableOpa
 import { getAuth } from 'firebase/auth';
 import { collection, getDocs, addDoc, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../App';
+import QuestItem from '../components/QuestItem';
+import { calculateNewXPAndLevel } from '../utils/xpUtils';
 const HomeScreen = ({ navigation }) => {
   const [quests, setQuests] = useState([]);
   const [level, setLevel] = useState(1);
