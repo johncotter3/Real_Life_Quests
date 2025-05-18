@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, TextInput, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { collection, getDocs, addDoc, updateDoc, doc, query, where } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+} from 'firebase/firestore';
 import { db } from '../App';
 import QuestItem from '../components/QuestItem';
 import { calculateNewXPAndLevel } from '../utils/xpUtils';
@@ -89,6 +98,32 @@ const HomeScreen = ({ navigation }) => {
       console.error("Error completing quest:", error);
     }
   };
+
+  const saveQuestTitle = async (id, title) => {
+    try {
+      await updateDoc(doc(db, 'quests', id), { title });
+      setQuests(prev => prev.map(q => (q.id === id ? { ...q, title } : q)));
+    } catch (error) {
+      console.error('Error updating quest:', error);
+    }
+  };
+
+  const deleteQuest = async (id) => {
+    try {
+      await deleteDoc(doc(db, 'quests', id));
+      setQuests(prev => prev.filter(q => q.id !== id));
+    } catch (error) {
+      console.error('Error deleting quest:', error);
+    }
+  };
+
+  const moveQuest = (index, direction) => {
+    const newQuests = [...quests];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= newQuests.length) return;
+    [newQuests[index], newQuests[targetIndex]] = [newQuests[targetIndex], newQuests[index]];
+    setQuests(newQuests);
+  };
   const handleSignOut = () => {
     const auth = getAuth();
     auth.signOut()
@@ -119,8 +154,15 @@ const HomeScreen = ({ navigation }) => {
         <FlatList
           data={quests}
           keyExtractor={item => item.id}
-          renderItem={({ item }) => (
-            <QuestItem item={item} onComplete={completeQuest} />
+          renderItem={({ item, index }) => (
+            <QuestItem
+              item={item}
+              onComplete={completeQuest}
+              onDelete={deleteQuest}
+              onSave={saveQuestTitle}
+              onMoveUp={() => moveQuest(index, 'up')}
+              onMoveDown={() => moveQuest(index, 'down')}
+            />
           )}
           style={styles.questList}
           ListEmptyComponent={
