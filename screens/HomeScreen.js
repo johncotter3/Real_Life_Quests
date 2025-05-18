@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, TextInput, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { getAuth } from 'firebase/auth';
-import { collection, getDocs, addDoc, updateDoc, doc } from 'firebase/firestore';
+import { SafeAreaView, View, Text, TextInput, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { collection, getDocs, addDoc, updateDoc, doc, query, where } from 'firebase/firestore';
 import { db } from '../App';
 import QuestItem from '../components/QuestItem';
 import { calculateNewXPAndLevel } from '../utils/xpUtils';
@@ -10,36 +10,56 @@ const HomeScreen = ({ navigation }) => {
   const [level, setLevel] = useState(1);
   const [xp, setXp] = useState(0);
   const [newQuest, setNewQuest] = useState('');
+  const [user, setUser] = useState(null);
   const auth = getAuth();
-  const user = auth.currentUser;
   
   // References for Firestore
   const questsRef = collection(db, 'quests');
 
+  // Listen for auth state changes
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (!currentUser) {
+        // If user is not logged in, redirect to login screen
+        navigation.replace('Login');
+      }
+    });
+    
+    return () => unsubscribe();
+  }, [navigation]);
+
+  useEffect(() => {
+    if (!user) return;
+    
     const fetchQuests = async () => {
       try {
-        // If logged in, we could filter quests by user.uid
-        const snapshot = await getDocs(questsRef);
+        // Filter quests by the current user's ID
+        const q = query(questsRef, where("userId", "==", user.uid));
+        const snapshot = await getDocs(q);
         const fetchedQuests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setQuests(fetchedQuests);
       } catch (error) {
         console.error("Error fetching quests:", error);
+        Alert.alert("Error", "Could not load your quests. Please try again.");
       }
     };
     
     fetchQuests();
-  }, []);
-
+  }, [user]);
   const addQuest = async () => {
     if (newQuest.trim().length === 0) return;
+    if (!user) {
+      Alert.alert("Error", "You must be logged in to add quests");
+      return;
+    }
     
     try {
       const newQuestData = { 
         title: newQuest, 
         xp: 10, 
         completed: false,
-        userId: user ? user.uid : 'anonymous',
+        userId: user.uid,
         createdAt: new Date().toISOString()
       };
       
@@ -48,6 +68,7 @@ const HomeScreen = ({ navigation }) => {
       setNewQuest('');
     } catch (error) {
       console.error("Error adding quest:", error);
+      Alert.alert("Error", "Failed to add quest. Please try again.");
     }
   };
 
@@ -68,61 +89,69 @@ const HomeScreen = ({ navigation }) => {
       console.error("Error completing quest:", error);
     }
   };
-
   const handleSignOut = () => {
     const auth = getAuth();
     auth.signOut()
       .then(() => {
-        navigation.navigate('Login');
+        // Replace instead of navigate to prevent going back
+        navigation.replace('Login');
       })
       .catch((error) => {
         console.error("Error signing out:", error);
+        Alert.alert("Error", "Could not sign out. Please try again.");
       });
   };
-
+  
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Real Life Quests</Text>
-        <TouchableOpacity onPress={handleSignOut} style={styles.signOutButton}>
-          <Text style={styles.signOutText}>Sign Out</Text>
-        </TouchableOpacity>
-      </View>
-      
-      <Text style={styles.subheader}>Level {level} - XP: {xp}</Text>
-      
-      <FlatList
-        data={quests}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <QuestItem item={item} onComplete={completeQuest} />
-        )}
-        style={styles.questList}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>No quests yet. Add your first quest below!</Text>
-        }
-      />
-      
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="New Quest"
-          value={newQuest}
-          onChangeText={setNewQuest}
-          style={styles.input}
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>
+            {user ? `Welcome, ${user.displayName || user.email.split('@')[0]}` : 'Real Life Quests'}
+          </Text>
+          <TouchableOpacity onPress={handleSignOut} style={styles.signOutButton}>
+            <Text style={styles.signOutText}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
+        
+        <Text style={styles.subheader}>Level {level} - XP: {xp}</Text>
+        
+        <FlatList
+          data={quests}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <QuestItem item={item} onComplete={completeQuest} />
+          )}
+          style={styles.questList}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>No quests yet. Add your first quest below!</Text>
+          }
         />
-        <TouchableOpacity style={styles.addButton} onPress={addQuest}>
-          <Text style={styles.addButtonText}>Add</Text>
-        </TouchableOpacity>
+        
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="New Quest"
+            value={newQuest}
+            onChangeText={setNewQuest}
+            style={styles.input}
+          />
+          <TouchableOpacity style={styles.addButton} onPress={addQuest}>
+            <Text style={styles.addButtonText}>Add</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#FFF8F0',
-    paddingHorizontal: 20,
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: 30, // Increased horizontal padding from 20 to 30
     paddingTop: 40,
   },
   header: {
