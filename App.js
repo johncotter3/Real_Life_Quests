@@ -4,6 +4,7 @@ import React from 'react';
 import { initializeApp, getApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import AppNavigator from './navigation/AppNavigator';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { firebaseConfig } from './config/firebase';
 
 // Initialize Firebase only once
@@ -22,7 +23,11 @@ try {
 export const db = getFirestore(app);
 
 export default function App() {
-  return <AppNavigator />;
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AppNavigator />
+    </GestureHandlerRootView>
+  );
 }
 
 // Note: Quest management and styling have been moved to HomeScreen.js
