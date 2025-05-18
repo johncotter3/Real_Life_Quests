@@ -15,14 +15,12 @@ const LoginScreen = ({ navigation }) => {
   // Use the existing Firebase app instance instead of creating a new one
   const app = getApp();
   const auth = getAuth(app);  // Set up Firebase Auth with the app instance
-    // Use correct Google OAuth client ID that matches the Firebase project
+    
+  // Use correct Google OAuth client ID from Firebase project
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    // Using client ID that matches Firebase messaging sender ID
-    clientId: Platform.OS === 'web' 
-      ? "464867383015-web_client_id.apps.googleusercontent.com" // Replace with actual web client ID
-      : Platform.OS === 'ios'
-        ? "464867383015-ios_client_id.apps.googleusercontent.com" // Replace with actual iOS client ID 
-        : "464867383015-android_client_id.apps.googleusercontent.com", // Replace with actual Android client ID
+    // Using the message sender ID from Firebase config as the base
+    clientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID,
+    // Note: You may need separate client IDs for iOS/Android if using native authentication
     scopes: ['profile', 'email'],
     ...(Platform.OS === 'web' && {
       redirectUri: window.location.origin,
@@ -37,13 +35,13 @@ const LoginScreen = ({ navigation }) => {
       
       // Create credential from token
       const credential = GoogleAuthProvider.credential(id_token);
-      
-      // Sign in with Firebase
+        // Sign in with Firebase
       signInWithCredential(auth, credential)
         .then((userCredential) => {
           // Successfully signed in
           setLoading(false);
-          navigation.navigate('Home');
+          // Use replace instead of navigate to prevent going back to login
+          navigation.replace('Home');
         })
         .catch((error) => {
           console.error("Firebase auth error:", error);

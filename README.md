@@ -18,8 +18,6 @@ Start the Expo development server. You can use the npm script or call Expo
 directly:
 
 ```bash
-npm start
-# or
 npx expo start
 ```
 
