@@ -19,7 +19,7 @@ const LoginScreen = ({ navigation }) => {
   // Use correct Google OAuth client ID from Firebase project
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     // Using the message sender ID from Firebase config as the base
-    clientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID,
+    clientId: "617838392232-6o2dlt47os0pa1ulmluf6li1kkekaqam.apps.googleusercontent.com",
     // Note: You may need separate client IDs for iOS/Android if using native authentication
     scopes: ['profile', 'email'],
     ...(Platform.OS === 'web' && {
