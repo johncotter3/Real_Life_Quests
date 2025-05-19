@@ -21,6 +21,9 @@ jest.mock('firebase/auth', () => ({
 }));
 
 describe('SignUpScreen', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
   it('calls promptAsync when Sign up with Google is pressed', () => {
     const navigation = { navigate: jest.fn() };
     const { getByText } = render(<SignUpScreen navigation={navigation} />);
