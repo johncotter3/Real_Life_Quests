@@ -13,7 +13,7 @@ import {
   getDoc,
   setDoc,
 } from 'firebase/firestore';
-import { db } from '../App';
+import { db } from '../config/firebaseClient';
 import QuestItem from '../components/QuestItem';
 import { calculateNewXPAndLevel } from '../utils/xpUtils';
 const HomeScreen = ({ navigation }) => {
