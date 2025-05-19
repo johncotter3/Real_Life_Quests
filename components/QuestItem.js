@@ -26,15 +26,21 @@ export default function QuestItem({
   };
 
   const renderLeftActions = () => (
-    <View style={styles.leftAction}>
+    <TouchableOpacity
+      style={styles.leftAction}
+      onPress={() => setIsEditing(true)}
+    >
       <Text style={styles.actionText}>Edit</Text>
-    </View>
+    </TouchableOpacity>
   );
 
   const renderRightActions = () => (
-    <View style={styles.rightAction}>
+    <TouchableOpacity
+      style={styles.rightAction}
+      onPress={() => onDelete(item.id)}
+    >
       <Text style={styles.actionText}>Delete</Text>
-    </View>
+    </TouchableOpacity>
   );
 
   const content = isEditing ? (
