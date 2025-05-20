@@ -7,7 +7,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest",
-    "deploy-hosting": "npx expo export && mv dist public && npx firebase deploy --only hosting"
+    "deploy-hosting": "npx expo export --no-ssg && mv dist public && npx firebase deploy --only hosting"
   },
   "dependencies": {
     "@firebase/auth": "^1.10.0",
