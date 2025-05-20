@@ -27,7 +27,7 @@ module.exports = {  expo: {
     web: {
       favicon: './assets/favicon.png',
       bundler: 'metro',
-      output: 'static',
+      output: 'server',
       config: {
         firebase: {
           authDomain: "real-life-quests-27f84.firebaseapp.com"
