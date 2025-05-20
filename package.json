@@ -7,7 +7,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "jest"
+    "test": "jest",
+    "deploy-hosting": "npx expo export:web && mv web-build public && npx firebase deploy --only hosting"
   },
   "dependencies": {
     "@firebase/auth": "^1.10.0",
@@ -35,7 +36,8 @@
     "jest": "^29.6.4",
     "metro-react-native-babel-preset": "^0.77.0",
     "react-native-gesture-handler": "^2.25.0",
-    "react-test-renderer": "18.3.1"
+    "react-test-renderer": "18.3.1",
+    "@expo/webpack-config": "^0.19.12"
   },
   "private": true
 }
