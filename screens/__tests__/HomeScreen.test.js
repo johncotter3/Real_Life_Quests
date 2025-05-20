@@ -21,7 +21,7 @@ jest.mock('firebase/firestore', () => ({
   setDoc: jest.fn(),
 }));
 
-jest.mock('../../App', () => ({ db: {} }));
+jest.mock('../../config/firebaseClient', () => ({ db: {} }));
 
 jest.mock('../../components/QuestItem', () => 'QuestItem');
 
