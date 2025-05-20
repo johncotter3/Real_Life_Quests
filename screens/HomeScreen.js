@@ -57,8 +57,8 @@ const HomeScreen = ({ navigation }) => {
           }
         });
         
-        // Calculate level from total XP
-        const calculatedLevel = Math.floor(Math.sqrt(totalXp / 10)) + 1;
+        // Calculate level from total XP using the same logic as quest completion
+        const calculatedLevel = Math.floor(totalXp / 100) + 1;
         
         setXp(totalXp);
         setLevel(calculatedLevel);
