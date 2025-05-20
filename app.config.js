@@ -23,9 +23,10 @@ module.exports = {  expo: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#ffffff'
       }
-    },    web: {
+    },
+    web: {
       favicon: './assets/favicon.png',
-      bundler: 'metro',
+      bundler: 'webpack',
       output: 'static',
       config: {
         firebase: {
