@@ -26,7 +26,7 @@ module.exports = {  expo: {
     },
     web: {
       favicon: './assets/favicon.png',
-      bundler: 'webpack',
+      bundler: 'metro',
       output: 'static',
       config: {
         firebase: {
