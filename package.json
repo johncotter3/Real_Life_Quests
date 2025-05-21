@@ -10,12 +10,12 @@
     "build-web": "npx expo export:web",
     "predeploy": "npm run build-web",
     "deploy-hosting": "firebase deploy --only hosting"
-  },"dependencies": {
+  },  "dependencies": {
     "@expo/cli": "~0.24.13",
     "@expo/webpack-config": "^19.0.1",
     "@firebase/auth": "^1.10.0",
-    "@react-navigation/native": "^7.1.6",
-    "@react-navigation/native-stack": "^7.3.10",
+    "@react-navigation/native": "^6.1.9",
+    "@react-navigation/native-stack": "^6.9.17",
     "expo": "^49.0.13",
     "expo-auth-session": "~5.0.2",
     "expo-web-browser": "~12.3.2",
@@ -26,7 +26,7 @@
     "react-native-safe-area-context": "4.6.3",
     "react-native-screens": "~3.22.0",
     "react-native-web": "~0.19.6"
-  },  "devDependencies": {
+  },"devDependencies": {
     "@babel/core": "^7.20.0",
     "@expo/metro-config": "^0.10.7",
     "@testing-library/jest-native": "^5.4.2",
