@@ -36,7 +36,15 @@ To build the web version of the app:
 npm run build-web
 ```
 
-This will export the web build to the `web-build` directory.
+This will export the web build to the `web-build` directory using Expo's webpack bundler.
+
+### Configuration Notes
+
+The app is configured to use webpack for web builds instead of Metro, which allows for better compatibility with web-specific dependencies. Key configuration details:
+
+- In `app.config.js`: Web bundler is set to `webpack` and output is set to `static`
+- Expo 49 is used for compatibility with the latest webpack configuration
+- React Native Gesture Handler is conditionally imported only on native platforms
 
 ### Deploying to Firebase
 

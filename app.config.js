@@ -26,7 +26,10 @@ module.exports = {  expo: {
     },    web: {
       favicon: './assets/favicon.png',
       bundler: 'webpack',
-      output: 'static', // Changed from 'server' to 'static' for Firebase hosting
+      output: 'static', // Static output for Firebase hosting
+      build: {
+        output: 'web-build'
+      },
       config: {
         firebase: {
           authDomain: "real-life-quests-27f84.firebaseapp.com"
