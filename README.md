@@ -26,6 +26,36 @@ Android or the web. You can also scan the QR code with the Expo Go app on your
 device. For a specific platform, you can run `npm run android`, `npm run ios`,
 or `npm run web`.
 
+## Deployment
+
+### Building for Web
+
+To build the web version of the app:
+
+```bash
+npm run build-web
+```
+
+This will export the web build to the `web-build` directory.
+
+### Deploying to Firebase
+
+To deploy the web build to Firebase Hosting:
+
+```bash
+npm run deploy-hosting
+```
+
+Or use the all-in-one script to build and deploy in one step:
+
+```bash
+./build-and-deploy.cmd
+```
+
+### Continuous Deployment
+
+The app is set up with GitHub Actions to automatically deploy to Firebase Hosting when changes are pushed to the main branch.
+
 ### Run Tests
 
 The project uses Jest for testing. Execute the test suite with:
