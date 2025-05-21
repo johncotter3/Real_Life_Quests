@@ -3,3 +3,5 @@ node_modules/
 .expo/
 dist/
 firebase-debug.log
+web-build/
+.firebase/
