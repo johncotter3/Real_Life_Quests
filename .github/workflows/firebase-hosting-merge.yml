@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: '22'
       - name: Install dependencies
-        run: npm ci && npm run build
+        run: npm ci && npx expo start --no-dev --minify
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
