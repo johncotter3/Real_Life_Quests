@@ -40,4 +40,10 @@ describe('QuestItem', () => {
     fireEvent.press(getByText('Delete'));
     expect(baseProps.onDelete).toHaveBeenCalledWith(1);
   });
+
+  it('calls onComplete when quest item pressed', () => {
+    const { getByText } = render(<QuestItem {...baseProps} />);
+    fireEvent.press(getByText('Quest (+10 XP)'));
+    expect(baseProps.onComplete).toHaveBeenCalledWith(1);
+  });
 });
