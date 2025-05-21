@@ -7,6 +7,7 @@ This repository contains a React Native project.
 - Always terminate JavaScript statements with semicolons.
 - Prefer arrow functions and functional React components.
 - Commit messages should be concise and written in the imperative mood (e.g. "Add login button").
-- If any automated tests or lint commands are added in the future, run them before committing. Currently there are no test or lint scripts.
+- Run `npm test` before committing to ensure all Jest tests pass.
+- There is currently no lint script.
 
 These instructions apply to the entire repository unless overridden by a nested `AGENTS.md`.
