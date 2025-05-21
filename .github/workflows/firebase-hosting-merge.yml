@@ -18,9 +18,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - run: npm run deploy-hosting
-      - uses: actions/checkout@v4
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_REAL_LIFE_QUESTS_27F84 }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_REAL_LIFE_QUESTS_27F84 }}
           channelId: live
-          projectId: real-life-quests-27f84
+          appId: ${{ secrets.EXPO_PUBLIC_FIREBASE_APP_ID }}
