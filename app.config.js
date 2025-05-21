@@ -23,11 +23,10 @@ module.exports = {  expo: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#ffffff'
       }
-    },
-    web: {
+    },    web: {
       favicon: './assets/favicon.png',
-      bundler: 'metro',
-      output: 'server',
+      bundler: 'webpack',
+      output: 'static', // Changed from 'server' to 'static' for Firebase hosting
       config: {
         firebase: {
           authDomain: "real-life-quests-27f84.firebaseapp.com"
