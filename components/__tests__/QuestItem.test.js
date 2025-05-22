@@ -1,12 +1,13 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
+import { act } from 'react-test-renderer';
 import QuestItem from '../QuestItem';
 
 jest.mock('react-native-gesture-handler', () => {
   const React = require('react');
   const { View } = require('react-native');
-  const Swipeable = ({ renderLeftActions, renderRightActions, children }) => (
-    <View>
+  const Swipeable = ({ renderLeftActions, renderRightActions, children, ...rest }) => (
+    <View testID="swipeable" {...rest}>
       {renderLeftActions && renderLeftActions()}
       {children}
       {renderRightActions && renderRightActions()}
@@ -45,5 +46,21 @@ describe('QuestItem', () => {
     const { getByText } = render(<QuestItem {...baseProps} />);
     fireEvent.press(getByText('Quest (+10 XP)'));
     expect(baseProps.onComplete).toHaveBeenCalledWith(1);
+  });
+
+  it('enters edit mode when swiped right', () => {
+    const { getByTestId, getByText } = render(<QuestItem {...baseProps} />);
+    act(() => {
+      getByTestId('swipeable').props.onSwipeableRightOpen();
+    });
+    expect(getByText('Save')).toBeTruthy();
+  });
+
+  it('deletes quest when swiped left', () => {
+    const { getByTestId } = render(<QuestItem {...baseProps} />);
+    act(() => {
+      getByTestId('swipeable').props.onSwipeableLeftOpen();
+    });
+    expect(baseProps.onDelete).toHaveBeenCalledWith(1);
   });
 });
