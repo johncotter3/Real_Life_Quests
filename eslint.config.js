@@ -1,4 +1,5 @@
 import eslintPluginReact from 'eslint-plugin-react';
+import babelParser from '@babel/eslint-parser';
 
 export default [
   {
@@ -7,19 +8,17 @@ export default [
   {
     files: ['**/*.js'],
     languageOptions: {
-      parser: '@babel/eslint-parser',
+      parser: babelParser,
       parserOptions: {
-           ecmaVersion: 'latest',
-           sourceType: 'module',
-           ecmaFeatures: {
-               jsx: false
-           }
-       },
-      ecmaVersion: 'latest',
-      sourceType: 'module'
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: false
+        },
+        requireConfigFile: false
+      }
     },
     plugins: { react: eslintPluginReact },
     rules: {}
   }
 ];
-
