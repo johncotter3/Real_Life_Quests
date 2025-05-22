@@ -6,8 +6,8 @@ export default [
   },
   {
     files: ['**/*.js'],
-    parser: '@babel/eslint-parser',
     languageOptions: {
+      parser: '@babel/eslint-parser',
       ecmaVersion: 'latest',
       sourceType: 'module'
     },
