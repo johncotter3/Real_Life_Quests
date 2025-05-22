@@ -28,18 +28,18 @@ export default function QuestItem({
   const renderLeftActions = () => (
     <TouchableOpacity
       style={styles.leftAction}
-      onPress={() => setIsEditing(true)}
+      onPress={() => onDelete(item.id)}
     >
-      <Text style={styles.actionText}>Edit</Text>
+      <Text style={styles.actionText}>Delete</Text>
     </TouchableOpacity>
   );
 
   const renderRightActions = () => (
     <TouchableOpacity
       style={styles.rightAction}
-      onPress={() => onDelete(item.id)}
+      onPress={() => setIsEditing(true)}
     >
-      <Text style={styles.actionText}>Delete</Text>
+      <Text style={styles.actionText}>Edit</Text>
     </TouchableOpacity>
   );
 
@@ -77,8 +77,8 @@ export default function QuestItem({
     <Swipeable
       renderLeftActions={renderLeftActions}
       renderRightActions={renderRightActions}
-      onSwipeableLeftOpen={() => setIsEditing(true)}
-      onSwipeableRightOpen={() => onDelete(item.id)}
+      onSwipeableLeftOpen={() => onDelete(item.id)}
+      onSwipeableRightOpen={() => setIsEditing(true)}
     >
       {content}
     </Swipeable>
