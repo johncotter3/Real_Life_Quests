@@ -58,4 +58,39 @@ describe('HomeScreen', () => {
     await waitFor(() => expect(signOut).toHaveBeenCalled());
     expect(navigation.replace).toHaveBeenCalledWith('Login');
   });
+
+  it('resets quests when lastReset is not today', async () => {
+    const auth = require('firebase/auth');
+    const firestore = require('firebase/firestore');
+
+    auth.onAuthStateChanged.mockImplementation((a, cb) => {
+      cb({ uid: '1', email: 'test@example.com' });
+      return jest.fn();
+    });
+    auth.getAuth.mockReturnValue({ signOut: jest.fn() });
+
+    const yesterday = '2000-01-01';
+    const today = new Date().toISOString().split('T')[0];
+
+    firestore.getDoc.mockResolvedValue({
+      exists: () => true,
+      data: () => ({ xp: 0, level: 1, lastReset: yesterday }),
+    });
+
+    firestore.getDocs.mockResolvedValue({
+      docs: [
+        { id: 'q1', data: () => ({ completed: true, xp: 10 }) },
+      ],
+    });
+
+    firestore.doc.mockImplementation((db, coll, id) => `${coll}/${id}`);
+
+    const navigation = { replace: jest.fn() };
+    render(<HomeScreen navigation={navigation} />);
+
+    await waitFor(() => {
+      expect(firestore.updateDoc).toHaveBeenCalledWith('quests/q1', { completed: false });
+    });
+    expect(firestore.updateDoc).toHaveBeenCalledWith('users/1', { lastReset: today });
+  });
 });
