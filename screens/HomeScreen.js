@@ -38,37 +38,48 @@ const HomeScreen = ({ navigation }) => {
     });
     
     return () => unsubscribe();
-  }, [navigation]);  useEffect(() => {
+  }, [navigation]);
+
+  useEffect(() => {
     if (!user) return;
-    
-    const fetchUserData = async () => {
+
+    const loadData = async () => {
       try {
-        // Filter quests by the current user's ID
-        const q = query(questsRef, where("userId", "==", user.uid));
+        const today = new Date().toISOString().split('T')[0];
+        const userRef = doc(db, 'users', user.uid);
+        let userSnap = await getDoc(userRef);
+        if (!userSnap || !userSnap.exists()) {
+          await setDoc(userRef, { xp: 0, level: 1, lastReset: today });
+          userSnap = await getDoc(userRef);
+        }
+        const userData = userSnap?.data() || {};
+        setXp(userData.xp || 0);
+        setLevel(userData.level || 1);
+
+        const q = query(questsRef, where('userId', '==', user.uid));
         const snapshot = await getDocs(q);
-        const fetchedQuests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setQuests(fetchedQuests);
-        
-        // Calculate total XP from completed quests
-        let totalXp = 0;
-        fetchedQuests.forEach(quest => {
-          if (quest.completed) {
-            totalXp += quest.xp;
+        let fetchedQuests = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        if (userData.lastReset !== today) {
+          const updates = fetchedQuests
+            .filter(q => q.completed)
+            .map(q => updateDoc(doc(db, 'quests', q.id), { completed: false }));
+          if (updates.length) {
+            await Promise.all(updates);
+            fetchedQuests = fetchedQuests.map(q =>
+              q.completed ? { ...q, completed: false } : q
+            );
           }
-        });
-        
-        // Calculate level from total XP using the same logic as quest completion
-        const calculatedLevel = Math.floor(totalXp / 100) + 1;
-        
-        setXp(totalXp);
-        setLevel(calculatedLevel);
+          await updateDoc(userRef, { lastReset: today });
+        }
+        setQuests(fetchedQuests);
       } catch (error) {
-        console.error("Error fetching quests:", error);
-        Alert.alert("Error", "Could not load your quests. Please try again.");
+        console.error('Error fetching quests:', error);
+        Alert.alert('Error', 'Could not load your quests. Please try again.');
       }
     };
-    
-    fetchUserData();
+
+    loadData();
   }, [user]);
   const addQuest = async () => {
     if (newQuest.trim().length === 0) return;
@@ -93,30 +104,32 @@ const HomeScreen = ({ navigation }) => {
       console.error("Error adding quest:", error);
       Alert.alert("Error", "Failed to add quest. Please try again.");
     }
-  };  const completeQuest = async (id) => {
+  };
+
+  const completeQuest = async (id) => {
     try {
       const questToComplete = quests.find(q => q.id === id && !q.completed);
-      
+
       if (questToComplete) {
-        // Calculate new XP and level
         const { newXp, newLevel } = calculateNewXPAndLevel(xp, questToComplete.xp);
-        
-        // Update quest in Firestore
+
         await updateDoc(doc(db, 'quests', id), { completed: true });
-        
-        // Update local state
+        await updateDoc(doc(db, 'users', user.uid), {
+          xp: newXp,
+          level: newLevel,
+        });
+
         setXp(newXp);
         setLevel(newLevel);
-        
-        // Update quests list
-        const updatedQuests = quests.map(q => 
+
+        const updatedQuests = quests.map(q =>
           q.id === id ? { ...q, completed: true } : q
         );
         setQuests(updatedQuests);
       }
     } catch (error) {
-      console.error("Error completing quest:", error);
-      Alert.alert("Error", "Could not complete the quest. Please try again.");
+      console.error('Error completing quest:', error);
+      Alert.alert('Error', 'Could not complete the quest. Please try again.');
     }
   };
 
