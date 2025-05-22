@@ -72,3 +72,13 @@ The project uses Jest for testing. Execute the test suite with:
 npm test
 ```
 
+### Run Lint
+
+ESLint checks the project's JavaScript code for issues. Run the linter with:
+
+```bash
+npm run lint
+```
+
+Linting also runs automatically on pull requests via GitHub Actions.
+
